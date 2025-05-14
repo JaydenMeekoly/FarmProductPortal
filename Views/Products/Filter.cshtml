@@ -1,0 +1,64 @@
+﻿@model ProductFilterViewModel
+
+<h2>Filter Products</h2>
+
+<form method="get">
+    <div class="form-group">
+        <label>Category</label>
+        <input type="text" name="category" value="@Model.Category" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>End Date</label>
+        <input type="date" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Farmer</label>
+        @{
+            var farmerOptions = new List<string> { "<option value=\"\">All Farmers</option>" };
+            foreach (var farmer in Model.AllFarmers)
+            {
+                var isSelected = farmer.Id == Model.FarmerId ? " selected=\"selected\"" : "";
+                farmerOptions.Add($"<option value=\"{farmer.Id}\"{isSelected}>{farmer.UserName}</option>");
+            }
+        }
+        <select name="farmerId" class="form-control">
+            @Html.Raw(string.Join("\n", farmerOptions))
+        </select>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+@if (Model.Results != null && Model.Results.Count > 0)
+{
+    <hr />
+    <table class="table table-dark mt-4">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Production Date</th>
+                <th>Farmer</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Results)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Category</td>
+                    <td>@product.ProductionDate.ToString("yyyy-MM-dd")</td>
+                    <td>@product.Farmer?.UserName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
